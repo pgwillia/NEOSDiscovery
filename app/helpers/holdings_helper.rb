@@ -1,5 +1,5 @@
-require_relative "../services/symphony_service.rb"
-require_relative "../services/marc_module.rb"
+require_relative '../services/symphony_service.rb'
+require_relative '../services/marc_module.rb'
 
 module HoldingsHelper
   include MarcModule
@@ -14,5 +14,4 @@ module HoldingsHelper
       nil
     end
   end
-
 end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
+
 class SearchBuilder < Blacklight::SearchBuilder
+
   include Blacklight::Solr::SearchBuilderBehavior
   include BlacklightRangeLimit::RangeLimitBuilder
 
@@ -12,4 +14,5 @@ class SearchBuilder < Blacklight::SearchBuilder
     solr_parameters[:fq] ||= []
     solr_parameters[:fq] << 'source:Symphony'
   end
+
 end

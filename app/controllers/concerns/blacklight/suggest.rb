@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Blacklight
   module Suggest
     extend ActiveSupport::Concern

@@ -1,16 +1,17 @@
 # frozen_string_literal: true
+
 module Blacklight::SearchContext
   extend ActiveSupport::Concern
 
   # The following code is executed when someone includes blacklight::catalog::search_session in their
   # own controller.
-  included do  
+  included do
     helper_method :current_search_session, :search_session
   end
 
   module ClassMethods
     # Save the submitted search parameters in the search session
-    def record_search_parameters opts = { only: :index}
+    def record_search_parameters(opts = { only: :index })
       before_action :set_current_search_session, opts
     end
   end
@@ -63,10 +64,10 @@ module Blacklight::SearchContext
     false
   end
 
-  def find_or_initialize_search_session_from_params params
-    params_copy = params.reject { |k,v| blacklisted_search_session_params.include?(k.to_sym) or v.blank? }
+  def find_or_initialize_search_session_from_params(params)
+    params_copy = params.reject { |k, v| blacklisted_search_session_params.include?(k.to_sym) || v.blank? }
 
-    return if params_copy.reject { |k,v| [:action, :controller].include? k.to_sym }.blank?
+    return if params_copy.reject { |k, _v| [:action, :controller].include? k.to_sym }.blank?
 
     saved_search = searches_from_history.find { |x| x.query_params == params_copy }
 
@@ -76,13 +77,13 @@ module Blacklight::SearchContext
   end
 
   # Add a search to the in-session search history list
-  def add_to_search_history search
+  def add_to_search_history(search)
     session[:history] ||= []
 
     session[:history].unshift(search.id)
 
     if session[:history].length > blacklight_config.search_history_window
-      session[:history] = session[:history].slice(0, blacklight_config.search_history_window )
+      session[:history] = session[:history].slice(0, blacklight_config.search_history_window)
     end
   end
 
@@ -94,7 +95,7 @@ module Blacklight::SearchContext
   # calls setup_previous_document then setup_next_document.
   # used in the show action for single view pagination.
   def setup_next_and_previous_documents
-    if search_session['counter'] and current_search_session
+    if search_session['counter'] && current_search_session
       index = search_session['counter'].to_i - 1
       response, documents = get_previous_and_next_documents_for_search index, search_state.reset(current_search_session.query_params).to_hash
 

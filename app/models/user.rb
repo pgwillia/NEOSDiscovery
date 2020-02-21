@@ -1,8 +1,6 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
 
-  if Blacklight::Utils.needs_attr_accessible?
-    attr_accessible :email, :password, :password_confirmation
-  end
+  attr_accessible :email, :password, :password_confirmation if Blacklight::Utils.needs_attr_accessible?
   # Connects this user object to Blacklights Bookmarks.
   include Blacklight::User
   # Include default devise modules. Others available are:
@@ -16,4 +14,5 @@ class User < ActiveRecord::Base
   def to_s
     email
   end
+
 end

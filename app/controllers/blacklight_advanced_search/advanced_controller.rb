@@ -1,6 +1,7 @@
 # Need to sub-class CatalogController so we get all other plugins behavior
 # for our own "inside a search context" lookup of facets.
 class BlacklightAdvancedSearch::AdvancedController < CatalogController
+
   helper BlacklightRangeLimit::ViewHelperOverride
   helper RangeLimitHelper
 
@@ -26,4 +27,5 @@ class BlacklightAdvancedSearch::AdvancedController < CatalogController
 
     response
   end
+
 end

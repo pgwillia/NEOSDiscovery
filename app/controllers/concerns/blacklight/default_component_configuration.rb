@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Blacklight
   module DefaultComponentConfiguration
     extend ActiveSupport::Concern
@@ -26,7 +27,6 @@ module Blacklight
 
     module ClassMethods
       # YARD will include inline disabling as docs, cannot do multiline inside @!macro.  AND this must be separate from doc block.
-      # rubocop:disable Metrics/LineLength
 
       # @!macro partial_if_unless
       #   @param name [String] the name of the document partial
@@ -49,9 +49,9 @@ module Blacklight
           @response, @documents = action_documents
 
           if request.post? && opts[:callback] &&
-            (opts[:validator].blank? || self.send(opts[:validator]))
+             (opts[:validator].blank? || send(opts[:validator]))
 
-            self.send(opts[:callback], @documents)
+            send(opts[:callback], @documents)
 
             flash[:success] ||= I18n.t("blacklight.#{name}.success", default: nil)
 
@@ -62,12 +62,11 @@ module Blacklight
           else
             respond_to do |format|
               format.html
-              format.js { render :layout => false }
+              format.js { render layout: false }
             end
           end
         end
       end
-      # rubocop:enable Metrics/LineLength
 
       # Add a tool to be displayed for each document in the search results.
       # @!macro partial_if_unless

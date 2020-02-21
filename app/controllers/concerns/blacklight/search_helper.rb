@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # SearchHelper is a controller layer mixin. It is in the controller scope: request params, session etc.
 #
 # NOTE: Be careful when creating variables here as they may be overriding something that already exists.
@@ -88,7 +89,7 @@ module Blacklight::SearchHelper
 
   # Get the previous and next document from a search result
   # @return [Blacklight::Solr::Response, Array<Blacklight::SolrDocument>] the solr response and a list of the first and last document
-  def get_previous_and_next_documents_for_search(index, request_params, extra_controller_params={})
+  def get_previous_and_next_documents_for_search(index, request_params, extra_controller_params = {})
     p = previous_and_next_document_params(index)
     query = search_builder.with(request_params).start(p.delete(:start)).rows(p.delete(:rows)).merge(extra_controller_params).merge(p)
     response = repository.search(query)
@@ -112,7 +113,7 @@ module Blacklight::SearchHelper
     query = search_builder.with(request_params).merge(solr_opensearch_params(field)).merge(extra_controller_params)
     response = repository.search(query)
 
-    [response.params[:q], response.documents.flat_map {|doc| doc[field] }.uniq]
+    [response.params[:q], response.documents.flat_map { |doc| doc[field] }.uniq]
   end
 
   ##
@@ -129,27 +130,27 @@ module Blacklight::SearchHelper
 
   private
 
-    ##
-    # Retrieve a set of documents by id
-    # @param [Array] ids
-    # @param [HashWithIndifferentAccess] user_params
-    # @param [HashWithIndifferentAccess] extra_controller_params
-    def fetch_many(ids, user_params, extra_controller_params)
-      user_params ||= params
-      extra_controller_params ||= {}
+  ##
+  # Retrieve a set of documents by id
+  # @param [Array] ids
+  # @param [HashWithIndifferentAccess] user_params
+  # @param [HashWithIndifferentAccess] extra_controller_params
+  def fetch_many(ids, user_params, extra_controller_params)
+    user_params ||= params
+    extra_controller_params ||= {}
 
-      query = search_builder.
-                with(user_params).
-                where(blacklight_config.document_model.unique_key => ids).
-                merge(extra_controller_params).
-                merge(fl: '*')
-      solr_response = repository.search(query)
+    query = search_builder
+            .with(user_params)
+            .where(blacklight_config.document_model.unique_key => ids)
+            .merge(extra_controller_params)
+            .merge(fl: '*')
+    solr_response = repository.search(query)
 
-      [solr_response, solr_response.documents]
-    end
+    [solr_response, solr_response.documents]
+  end
 
-    def fetch_one(id, extra_controller_params)
-      solr_response = repository.find id, extra_controller_params
-      [solr_response, solr_response.documents.first]
-    end
+  def fetch_one(id, extra_controller_params)
+    solr_response = repository.find id, extra_controller_params
+    [solr_response, solr_response.documents.first]
+  end
 end

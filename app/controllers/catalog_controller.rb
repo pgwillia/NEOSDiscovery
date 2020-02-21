@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CatalogController < ApplicationController
+
   include BlacklightRangeLimit::ControllerOverride
   include BlacklightAdvancedSearch::Controller
 
@@ -52,9 +53,7 @@ class CatalogController < ApplicationController
       end
     end
 
-    if @document['author_addl_t']
-      @additional_authors = @document['author_addl_t']
-    end
+    @additional_authors = @document['author_addl_t'] if @document['author_addl_t']
   end
 
   configure_blacklight do |config|
@@ -292,4 +291,5 @@ class CatalogController < ApplicationController
     config.autocomplete_enabled = true
     config.autocomplete_path = 'suggest'
   end
+
     end

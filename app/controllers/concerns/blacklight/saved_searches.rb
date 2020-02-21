@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Blacklight
   module SavedSearches
     extend ActiveSupport::Concern
@@ -53,7 +54,7 @@ module Blacklight
     # Only dereferences the user rather than removing the items in case they
     # are in the session[:history]
     def clear
-      if current_user.searches.update_all("user_id = NULL")
+      if current_user.searches.update_all('user_id = NULL')
         flash[:notice] = I18n.t('blacklight.saved_searches.clear.success')
       else
         flash[:error] = I18n.t('blacklight.saved_searches.clear.failure')
@@ -63,8 +64,10 @@ module Blacklight
 
     protected
 
-      def verify_user
-        flash[:notice] = I18n.t('blacklight.saved_searches.need_login') and raise Blacklight::Exceptions::AccessDenied unless current_user
+    def verify_user
+      unless current_user
+        (flash[:notice] = I18n.t('blacklight.saved_searches.need_login')) && raise(Blacklight::Exceptions::AccessDenied)
       end
+    end
   end
 end

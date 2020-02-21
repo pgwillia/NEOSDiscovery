@@ -1,12 +1,11 @@
 # frozen_string_literal: true
+
 module Blacklight
   module RequestBuilders
     extend ActiveSupport::Concern
 
     included do
-      if self.respond_to?(:helper_method)
-        helper_method(:facet_limit_for)
-      end
+      helper_method(:facet_limit_for) if respond_to?(:helper_method)
     end
 
     # Override this method to use a search builder other than the one in the config
@@ -33,17 +32,17 @@ module Blacklight
 
       if index > 0
         solr_params[:start] = index - window # get one before
-        solr_params[:rows] = 2*window + 1 # and one after
+        solr_params[:rows] = 2 * window + 1 # and one after
       else
         solr_params[:start] = 0 # there is no previous doc
-        solr_params[:rows] = 2*window # but there should be one after
+        solr_params[:rows] = 2 * window # but there should be one after
       end
 
       solr_params[:fl] = '*'
       solr_params[:facet] = false
       solr_params
     end
-    
+
     DEFAULT_FACET_LIMIT = 10
 
     # Look up facet limit for given facet_field. Will look at config, and
@@ -56,7 +55,7 @@ module Blacklight
       facet = blacklight_config.facet_fields[facet_field]
       return if facet.blank?
 
-      if facet.limit and @response and @response.aggregations[facet.field]
+      if facet.limit && @response && @response.aggregations[facet.field]
         limit = @response.aggregations[facet.field].limit
 
         if limit.nil? # we didn't get or a set a limit, so infer one.

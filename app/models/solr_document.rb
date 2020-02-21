@@ -1,21 +1,21 @@
 # frozen_string_literal: true
+
 class SolrDocument
-  include Blacklight::Solr::Document    
-      # The following shows how to setup this blacklight document to display marc documents
+
+  include Blacklight::Solr::Document
+  # The following shows how to setup this blacklight document to display marc documents
   extension_parameters[:marc_source_field] = :marc_display
   extension_parameters[:marc_format_type] = :marcxml
-  use_extension( Blacklight::Solr::Document::Marc) do |document|
-    document.key?( :marc_display  )
+  use_extension(Blacklight::Solr::Document::Marc) do |document|
+    document.key?(:marc_display)
   end
-  
-  field_semantics.merge!(    
-                         :title => "title_display",
-                         :author => "author_display",
-                         :language => "language_facet",
-                         :format => "format"
-                         )
 
-
+  field_semantics.merge!(
+    title: 'title_display',
+    author: 'author_display',
+    language: 'language_facet',
+    format: 'format'
+  )
 
   # self.unique_key = 'id'
 
@@ -32,12 +32,12 @@ class SolrDocument
   # Recommendation: Use field names from Dublin Core
   use_extension(Blacklight::Document::DublinCore)
 
- include Blacklight::Solr::Document::RisFields
+  include Blacklight::Solr::Document::RisFields
   use_extension(Blacklight::Solr::Document::RisExport)
 
   ris_field_mappings.merge!(
     # Procs are evaluated in context of SolrDocument instance
-    :TY => Proc.new {
+    TY: proc do
       format = fetch('format', [])
       if format.member?('Book')
         'BOOK'
@@ -48,17 +48,18 @@ class SolrDocument
       else
         'GEN'
       end
-    },
+    end,
     # use solr field named 'title'
-    :TI => 'title_display',
-    :AU => 'author_display',
-    :AU => 'author_addl_t',
-    :PY => 'pub_date',
+    TI: 'title_display',
+    AU: 'author_display',
+    AU: 'author_addl_t',
+    PY: 'pub_date',
     # this assumes you're using blacklight-marc
-    :CY => 'published_display',
-    :PB => 'publisher_tesim', #Proc.new { marclibrary.get_ris_pb_field(to_marc) },
-    :ET => 'edition',
-    :SN => 'isbn_tesim', #Proc.new { marclibrary.get_ris_sn_field(to_marc) },
-    :SN => 'issn_tesim'
+    CY: 'published_display',
+    PB: 'publisher_tesim', # Proc.new { marclibrary.get_ris_pb_field(to_marc) },
+    ET: 'edition',
+    SN: 'isbn_tesim', # Proc.new { marclibrary.get_ris_sn_field(to_marc) },
+    SN: 'issn_tesim'
   )
+
 end

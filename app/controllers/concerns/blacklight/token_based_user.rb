@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Blacklight::TokenBasedUser
   extend ActiveSupport::Concern
 
@@ -18,8 +19,8 @@ module Blacklight::TokenBasedUser
 
   def token_user
     @token_user ||= if params[:encrypted_user_id]
-      user_id = decrypt_user_id params[:encrypted_user_id]
-      User.find(user_id)
+                      user_id = decrypt_user_id params[:encrypted_user_id]
+                      User.find(user_id)
     end
   end
 
@@ -27,9 +28,7 @@ module Blacklight::TokenBasedUser
   def decrypt_user_id(encrypted_user_id)
     user_id, timestamp = message_encryptor.decrypt_and_verify(encrypted_user_id)
 
-    if timestamp < 1.hour.ago
-      raise Blacklight::Exceptions::ExpiredSessionToken
-    end
+    raise Blacklight::Exceptions::ExpiredSessionToken if timestamp < 1.hour.ago
 
     user_id
   end
@@ -56,7 +55,7 @@ module Blacklight::TokenBasedUser
     if ActiveSupport::MessageEncryptor.respond_to? :key_len
       ActiveSupport::MessageEncryptor.key_len
     else
-     0
+      0
     end
   end
 end

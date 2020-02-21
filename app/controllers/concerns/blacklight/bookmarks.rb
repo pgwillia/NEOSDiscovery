@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # note that while this is mostly restful routing, the #update and #destroy actions
 # take the Solr document ID as the :id, NOT the id of the actual Bookmark action.
 module Blacklight::Bookmarks
@@ -34,7 +35,7 @@ module Blacklight::Bookmarks
 
   # Blacklight uses #search_action_url to figure out the right URL for
   # the global search box
-  def search_action_url *args
+  def search_action_url(*args)
     search_catalog_url(*args)
   end
 
@@ -45,9 +46,9 @@ module Blacklight::Bookmarks
     @response, @document_list = fetch(bookmark_ids)
 
     respond_to do |format|
-      format.html { }
-      format.rss  { render :layout => false }
-      format.atom { render :layout => false }
+      format.html {}
+      format.rss  { render layout: false }
+      format.atom { render layout: false }
       format.json do
         render json: render_search_results_as_json
       end
@@ -70,25 +71,21 @@ module Blacklight::Bookmarks
   # bookmark[title] and bookmark[document_id], but in that case #update
   # is simpler.
   def create
-    @bookmarks = if params[:bookmarks]
-                   params[:bookmarks]
-                 else
-                   [{ document_id: params[:id], document_type: blacklight_config.document_model.to_s }]
-                 end
+    @bookmarks = params[:bookmarks] || [{ document_id: params[:id], document_type: blacklight_config.document_model.to_s }]
 
     current_or_guest_user.save! unless current_or_guest_user.persisted?
 
     success = @bookmarks.all? do |bookmark|
-       current_or_guest_user.bookmarks.where(bookmark).exists? || current_or_guest_user.bookmarks.create(bookmark)
+      current_or_guest_user.bookmarks.where(bookmark).exists? || current_or_guest_user.bookmarks.create(bookmark)
     end
 
     if request.xhr?
-      success ? render(json: { bookmarks: { count: current_or_guest_user.bookmarks.count }}) : render(plain: "", status: "500")
+      success ? render(json: { bookmarks: { count: current_or_guest_user.bookmarks.count } }) : render(plain: '', status: '500')
     else
       if @bookmarks.any? && success
-        flash[:notice] = I18n.t('blacklight.bookmarks.add.success', :count => @bookmarks.length)
+        flash[:notice] = I18n.t('blacklight.bookmarks.add.success', count: @bookmarks.length)
       elsif @bookmarks.any?
-        flash[:error] = I18n.t('blacklight.bookmarks.add.failure', :count => @bookmarks.length)
+        flash[:error] = I18n.t('blacklight.bookmarks.add.failure', count: @bookmarks.length)
       end
 
       if respond_to? :redirect_back
@@ -105,9 +102,9 @@ module Blacklight::Bookmarks
   def destroy
     bookmark = current_or_guest_user.bookmarks.find_by(document_id: params[:id], document_type: blacklight_config.document_model.to_s)
 
-    if bookmark && bookmark.delete && bookmark.destroyed?
+    if bookmark&.delete && bookmark&.destroyed?
       if request.xhr?
-        render(json: { bookmarks: { count: current_or_guest_user.bookmarks.count }})
+        render(json: { bookmarks: { count: current_or_guest_user.bookmarks.count } })
       elsif respond_to? :redirect_back
         redirect_back fallback_location: bookmarks_path, notice: I18n.t('blacklight.bookmarks.remove.success')
       else
@@ -130,18 +127,18 @@ module Blacklight::Bookmarks
     else
       flash[:error] = I18n.t('blacklight.bookmarks.clear.failure')
     end
-    redirect_to :action => "index"
+    redirect_to action: 'index'
   end
 
   protected
 
   def verify_user
-    unless current_or_guest_user or (action == "index" and token_or_current_or_guest_user)
-      flash[:notice] = I18n.t('blacklight.bookmarks.need_login') and raise Blacklight::Exceptions::AccessDenied
+    unless current_or_guest_user || ((action == 'index') && token_or_current_or_guest_user)
+      (flash[:notice] = I18n.t('blacklight.bookmarks.need_login')) && raise(Blacklight::Exceptions::AccessDenied)
     end
   end
 
   def start_new_search_session?
-    action_name == "index"
+    action_name == 'index'
   end
 end
