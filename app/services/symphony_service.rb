@@ -15,7 +15,8 @@ class SymphonyService
   def initialize(id, xml_response = nil)
     if valid? id
       begin
-        xml_response ||= open(ws_endpoint + ws_method + ws_parameters + id, read_timeout: Rails.configuration.symphony_timeout).read
+        xml_response ||= open(ws_endpoint + ws_method + ws_parameters + id,
+                              read_timeout: Rails.configuration.symphony_timeout).read
         @document = Nokogiri::XML(xml_response)
       rescue *EXCEPTIONS => e
         raise Error::HTTPError, 'SymphonyService: ' + e.message
@@ -76,7 +77,8 @@ class SymphonyService
     type = get(item, 'itemTypeID')
     location = get(item, 'libraryID')
     public_note = get(item, 'publicNote')
-    { item_id: item_id, status: status, call: call, location: location, type: type, copies: copies, due: due, summary_holdings: summary_holdings, public_note: public_note, holdable: holdable, bookable: bookable }
+    { item_id: item_id, status: status, call: call, location: location, type: type, copies: copies,
+      due: due, summary_holdings: summary_holdings, public_note: public_note, holdable: holdable, bookable: bookable }
   end
 
   def populate_subitems(item)
@@ -90,7 +92,9 @@ class SymphonyService
       status == 'CHECKEDOUT' ? due = get(subitem, 'dueDate') : ''
       type = get(subitem, 'itemTypeID')
       public_note = get(subitem, 'publicNote')
-      subitems << { item_id: item_id, status: status, call: call, location: location, type: type, copies: copies, due: due, summary_holdings: summary_holdings, public_note: public_note, holdable: holdable, bookable: bookable }
+      subitems << { item_id: item_id, status: status, call: call, location: location, type: type,
+                    copies: copies, due: due, summary_holdings: summary_holdings, public_note: public_note,
+                    holdable: holdable, bookable: bookable }
     end
     subitems
   end
@@ -101,7 +105,9 @@ class SymphonyService
     if @document
       link_items.each do |item|
         if label(item) && (label(item).text == 'Electronic access')
-          if (item.at_xpath('.//xmlns:text').text.include? 'University of Alberta Access') || (item.at_xpath('.//xmlns:text').text.include? 'Free') || (item.at_xpath('.//xmlns:text').text.include? 'NEOS')
+          if (item.at_xpath('.//xmlns:text').text.include? 'University of Alberta Access') ||
+             (item.at_xpath('.//xmlns:text').text.include? 'Free') ||
+             (item.at_xpath('.//xmlns:text').text.include? 'NEOS')
             ua_items[item.at_xpath('.//xmlns:text').text] = item.at_xpath('.//xmlns:url').text
           else
             non_ua_items[item.at_xpath('.//xmlns:text').text] = item.at_xpath('.//xmlns:url').text

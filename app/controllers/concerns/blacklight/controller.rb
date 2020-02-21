@@ -72,8 +72,8 @@ module Blacklight::Controller
       if search_state_class.instance_method(:initialize).arity == -3
         search_state_class.new(params, blacklight_config, self)
       else
-        Deprecation.warn(search_state_class, "The constructor for #{search_state_class} now requires a third argument. " \
-          'Invoking it will 2 arguments is deprecated and will be removed in Blacklight 7.')
+        Deprecation.warn(search_state_class, "The constructor for #{search_state_class} now requires a third argument." \
+          ' Invoking it will 2 arguments is deprecated and will be removed in Blacklight 7.')
         search_state_class.new(params, blacklight_config)
       end
     end

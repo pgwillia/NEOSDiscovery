@@ -28,7 +28,8 @@ module Blacklight::Base
       # If there are errors coming from the index page, we want to trap those sensibly
 
       if flash[:notice] == flash_notice
-        logger.error 'Cowardly aborting rsolr_request_error exception handling, because we redirected to a page that raises another exception'
+        logger.error 'Cowardly aborting rsolr_request_error exception handling, \
+        because we redirected to a page that raises another exception'
         raise exception
       end
 

@@ -30,7 +30,7 @@ Layout/IndentationConsistency:
 
 Layout/LineLength:
     Enabled: true
-    Max: 120 # default is 80
+    Max: 125 # default is 80
     IgnoredPatterns: ['\A\s*#'] # tweak to ignore long comments, which often are examples or URLs that are not easily broken up
 
 # readability is Actually Good
@@ -89,6 +89,7 @@ Style/BarePercentLiterals:
 Style/ClassVars:
   Exclude:
     - !ruby/regexp /_test\.rb$/
+    - 'app/controllers/forms_controller.rb'
 
 Style/Documentation:
   Enabled: false

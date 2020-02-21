@@ -18,7 +18,10 @@ RSpec.describe 'Item has proper holding table', type: :feature do
       visit '/catalog/954921333007'
 
       page.assert_selector('#holdings table td', count: 0)
-      expect(page).to have_text('No copies found. This item may be lost or missing, or the data may be temporarily unavailable. Please contact your library for assistance.')
+      expect(page).to have_text(
+        'No copies found. This item may be lost or missing, or the data may be temporarily unavailable. \
+        Please contact your library for assistance.'
+      )
     end
   end
 
@@ -27,7 +30,9 @@ RSpec.describe 'Item has proper holding table', type: :feature do
       visit '/catalog/10068'
 
       page.assert_selector('#holdings table td', count: 1)
-      expect(first('#holdings table td')).to have_text('University of Alberta Research and Collections Resource Facility')
+      expect(first('#holdings table td')).to have_text(
+        'University of Alberta Research and Collections Resource Facility'
+      )
       expect(first('#holdings table td')).to have_text('call number: LB 01 459 (1 reel)')
       expect(first('#holdings table td')).to have_text('status: on shelf')
       expect(first('#holdings table td')).to have_css("a[href='https://www.library.ualberta.ca/locations/rcrf']")
@@ -35,7 +40,9 @@ RSpec.describe 'Item has proper holding table', type: :feature do
       visit '/catalog/1000719'
 
       page.assert_selector('#holdings table td', count: 1)
-      expect(first('#holdings table td')).to have_text('University of Alberta Research and Collections Resource Facility')
+      expect(first('#holdings table td')).to have_text(
+        'University of Alberta Research and Collections Resource Facility'
+      )
       expect(first('#holdings table td')).to have_text('call number: F 1465.3 G6 M296 1988')
       expect(first('#holdings table td')).to have_text('status: Read On Site')
       expect(first('#holdings table td')).to have_css("a[href='https://www.library.ualberta.ca/locations/rcrf']")

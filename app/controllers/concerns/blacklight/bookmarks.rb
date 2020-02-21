@@ -71,7 +71,8 @@ module Blacklight::Bookmarks
   # bookmark[title] and bookmark[document_id], but in that case #update
   # is simpler.
   def create
-    @bookmarks = params[:bookmarks] || [{ document_id: params[:id], document_type: blacklight_config.document_model.to_s }]
+    @bookmarks = params[:bookmarks] ||
+                 [{ document_id: params[:id], document_type: blacklight_config.document_model.to_s }]
 
     current_or_guest_user.save! unless current_or_guest_user.persisted?
 
@@ -80,7 +81,11 @@ module Blacklight::Bookmarks
     end
 
     if request.xhr?
-      success ? render(json: { bookmarks: { count: current_or_guest_user.bookmarks.count } }) : render(plain: '', status: '500')
+      if success
+        render(json: { bookmarks: { count: current_or_guest_user.bookmarks.count } })
+      else
+        render(plain: '', status: '500')
+      end
     else
       if @bookmarks.any? && success
         flash[:notice] = I18n.t('blacklight.bookmarks.add.success', count: @bookmarks.length)
@@ -100,7 +105,9 @@ module Blacklight::Bookmarks
   # Beware, :id is the Solr document_id, not the actual Bookmark id.
   # idempotent, as DELETE is supposed to be.
   def destroy
-    bookmark = current_or_guest_user.bookmarks.find_by(document_id: params[:id], document_type: blacklight_config.document_model.to_s)
+    bookmark = current_or_guest_user.bookmarks
+                                    .find_by(document_id: params[:id],
+                                             document_type: blacklight_config.document_model.to_s)
 
     if bookmark&.delete && bookmark&.destroyed?
       if request.xhr?

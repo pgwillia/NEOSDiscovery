@@ -40,7 +40,8 @@ module Blacklight::UrlHelperBehavior
   ##
   # Link to the previous document in the current search context
   def link_to_previous_document(previous_document)
-    link_opts = session_tracking_params(previous_document, search_session['counter'].to_i - 1).merge(class: 'previous', rel: 'prev')
+    previous_session = search_session['counter'].to_i - 1
+    link_opts = session_tracking_params(previous_document, previous_session).merge(class: 'previous', rel: 'prev')
     # modified to carry-over lib parameter for branding
     # there may be unintended consequences to using solr_document_url for url_for_document
     url = nil
@@ -53,7 +54,8 @@ module Blacklight::UrlHelperBehavior
   ##
   # Link to the next document in the current search context
   def link_to_next_document(next_document)
-    link_opts = session_tracking_params(next_document, search_session['counter'].to_i + 1).merge(class: 'next', rel: 'next')
+    next_session = search_session['counter'].to_i + 1
+    link_opts = session_tracking_params(next_document, next_session).merge(class: 'next', rel: 'next')
     # modified to carry-over lib parameter for branding
     # there may be unintended consequences to using solr_document_url for url_for_document
     url = nil
@@ -71,7 +73,8 @@ module Blacklight::UrlHelperBehavior
   #   session_tracking_params(SolrDocument.new(id: 123), 7)
   #   => { data: { :'tracker-href' => '/catalog/123/track?counter=7&search_id=999' } }
   def session_tracking_params(document, counter)
-    path = session_tracking_path(document, per_page: params.fetch(:per_page, search_session['per_page']), counter: counter, search_id: current_search_session.try(:id))
+    path = session_tracking_path(document, per_page: params.fetch(:per_page, search_session['per_page']),
+                                           counter: counter, search_id: current_search_session.try(:id))
 
     return {} if path.nil?
 

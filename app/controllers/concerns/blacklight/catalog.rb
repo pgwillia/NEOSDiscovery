@@ -57,7 +57,8 @@ module Blacklight::Catalog
     search_session['id'] = params[:search_id]
     search_session['per_page'] = params[:per_page]
 
-    if params[:redirect] && (params[:redirect].starts_with?('/') || params[:redirect] =~ URI::DEFAULT_PARSER.make_regexp)
+    if params[:redirect] && (params[:redirect].starts_with?('/') ||
+       params[:redirect] =~ URI::DEFAULT_PARSER.make_regexp)
       uri = URI.parse(params[:redirect])
       # Retain querystring on catalog#redirect
       path = uri.query ? "#{uri.path}?#{uri.query}" : uri.path
@@ -189,7 +190,9 @@ module Blacklight::Catalog
 
   # Email Action (this will render the appropriate view on GET requests and process the form and send the email on POST requests)
   def email_action(documents)
-    mail = RecordMailer.email_record(documents, { to: params[:to], message: params[:message], call: params[:call], location: params[:location] }, url_options)
+    mail = RecordMailer.email_record(documents,
+                                     { to: params[:to], message: params[:message],
+                                       call: params[:call], location: params[:location] }, url_options)
     if mail.respond_to? :deliver_now
       mail.deliver_now
     else
